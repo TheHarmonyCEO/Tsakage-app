@@ -1,0 +1,378 @@
+/* =========================================
+   1. カラー変数（ライトモード / ダークモード対応）
+   ========================================= */
+:root {
+    /* ライトモードの色（基本） */
+    --bg-color: #ffffff;
+    --text-main: #37352f;
+    --text-muted: rgba(55, 53, 47, 0.6);
+    --text-placeholder: #dbdbdb;
+    --border-color: rgba(55, 53, 47, 0.16);
+    --hover-bg: rgba(55, 53, 47, 0.04);
+    --hover-bg-strong: rgba(55, 53, 47, 0.08);
+    --btn-bg: #37352f;
+    --btn-text: #ffffff;
+    --btn-hover: #2f2d28;
+    --completed-text: rgba(55, 53, 47, 0.4);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* ダークモードの色（Notion準拠） */
+        --bg-color: #191919;
+        --text-main: rgba(255, 255, 255, 0.9);
+        --text-muted: rgba(255, 255, 255, 0.5);
+        --text-placeholder: rgba(255, 255, 255, 0.2);
+        --border-color: rgba(255, 255, 255, 0.1);
+        --hover-bg: rgba(255, 255, 255, 0.05);
+        --hover-bg-strong: rgba(255, 255, 255, 0.08);
+        --btn-bg: rgba(255, 255, 255, 0.9);
+        --btn-text: #191919;
+        --btn-hover: #ffffff;
+        --completed-text: rgba(255, 255, 255, 0.3);
+    }
+
+    /* カレンダーのアイコンをダークモードで白く反転 */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(0.8);
+    }
+    /* セレクトボックスの中身の背景色 */
+    select option {
+        background-color: #2f2f2f;
+        color: #ffffff;
+    }
+}
+
+/* =========================================
+   2. 全体のリセットと基本設定
+   ========================================= */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif;
+    color: var(--text-main);
+    background-color: var(--bg-color);
+    line-height: 1.5;
+    /* モード切り替え時にフワッと色を変える */
+    transition: background-color 0.3s, color 0.3s; 
+}
+
+/* PCの余白をNotionバランスに調整 */
+.app-container {
+    max-width: 900px;
+    margin: 60px auto;
+    padding: 0 24px;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 32px;
+}
+
+/* =========================================
+   3. 入力エリアのデザイン
+   ========================================= */
+.input-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 32px;
+}
+
+.input-controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+/* タスク名入力欄 */
+#task_title {
+    flex-grow: 1; /* 空きスペースを埋める */
+    font-size: 1.5rem;
+    font-weight: 500;
+    border: none;
+    outline: none;
+    padding: 6px 0;
+    height: 36px;
+    color: var(--text-main);
+    background-color: transparent;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+}
+
+#task_title:focus {
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* プレースホルダー（未入力時の文字色）の統一 */
+#task_title::placeholder,
+#task_duedate::placeholder,
+.placeholder-color {
+    color: var(--text-placeholder) !important;
+}
+
+/* 重要度の未選択時の色 */
+#task_importance:invalid,
+#task_importance option[value=""] {
+    color: var(--text-placeholder);
+}
+#task_importance option {
+    color: var(--text-main);
+}
+
+/* プルダウンと期日入力の共通デザイン */
+input[type="date"], input[type="text"]#task_duedate, select {
+    font-family: inherit;
+    font-size: 0.9rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: transparent;
+    color: var(--text-main);
+    outline: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+input[type="date"]:hover, input[type="text"]#task_duedate:hover, select:hover {
+    background-color: var(--hover-bg);
+}
+
+/* プルダウン・期日・ボタンの究極固定設定（ガタつき防止） */
+#task_importance,
+#task_duedate {
+    width: 140px !important;
+    min-width: 140px !important;
+    max-width: 140px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    max-height: 36px !important;
+    box-sizing: border-box !important;
+    flex-shrink: 0 !important;
+    padding: 6px 10px !important;
+    margin: 0 !important;
+    line-height: normal !important;
+    vertical-align: middle !important;
+}
+
+button#save_btn {
+    width: auto !important;
+    height: 36px !important;
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    padding: 0 16px !important;
+    box-sizing: border-box !important;
+    background-color: var(--btn-bg);
+    color: var(--btn-text);
+    border: none;
+    font-weight: 500;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+}
+button#save_btn:hover {
+    background-color: var(--btn-hover);
+}
+
+/* =========================================
+   4. 補足説明（ヘルプテキスト）のデザイン
+   ========================================= */
+.date-input-group {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.help-text {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    position: absolute;
+    top: 100%;
+    left: 8px;
+    margin-top: 8px;
+    width: 100%;
+    white-space: nowrap;
+}
+
+/* =========================================
+   5. タスク一覧エリア
+   ========================================= */
+.task-list-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 12px;
+    font-size: 1rem;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 8px;
+    
+    /* 追加：削除の補足説明のスタイル */
+    .delete-help {
+    font-size: 0.65rem;          /* 「タスク名」よりさらに一回り小さい文字 */
+    color: var(--text-muted);   /* 薄いグレー */
+    margin-left: 8px;           /* 「タスク名」の文字との間に少しすき間をあける */
+    font-weight: normal;        /* 文字の太さを通常に戻してメリハリをつける */
+    opacity: 0.8;               /* ほんの少しだけさらに透明度を入れて馴染ませる */
+}
+}
+
+#task_list {
+    list-style: none;
+}
+
+.task-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: background-color 0.1s ease-in;
+}
+.task-item:hover {
+    background-color: var(--hover-bg-strong);
+}
+
+.task-checkbox {
+    margin-right: 12px;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.task-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.task-title {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.task-meta {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    display: flex;
+    gap: 12px;
+}
+
+.task-score {
+    font-weight: 600;
+    font-size: 1rem;
+    min-width: 40px;
+    text-align: right;
+}
+
+/* 完了済みタスクのスタイル */
+.task-item.completed .task-title {
+    color: var(--completed-text);
+    text-decoration: line-through;
+}
+.task-item.completed .task-meta,
+.task-item.completed .task-score {
+    opacity: 0.5;
+}
+.completed-date {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    background-color: var(--hover-bg);
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-left: 4px;
+}
+
+/* =========================================
+   6. 📅 条件付きカラー（ハイブリッド設定）
+   ========================================= */
+/* ─── ☀️ ライトモード（基本設定）：背景色で目立たせる ─── */
+.task-item.warning {
+    background-color: yellow !important;
+    color: var(--text-main); 
+}
+.task-item.warning:hover {
+    background-color: yellow !important;
+}
+
+.task-item.danger {
+    background-color: red !important;
+    color: var(--text-main);
+}
+.task-item.danger:hover {
+    background-color: red !important;
+}
+
+/* ─── 🌙 ダークモード時の上書き設定：背景は透明にして文字色を変える ─── */
+@media (prefers-color-scheme: dark) {
+    .task-item.warning,
+    .task-item.danger {
+        background-color: transparent !important;
+    }
+    .task-item.warning:hover,
+    .task-item.danger:hover {
+        background-color: var(--hover-bg-strong) !important;
+    }
+
+    /* 7日以内のタスク（黄色・オレンジ系） */
+    .task-item.warning .task-title {
+        color: yellow !important; 
+    }
+    .task-item.warning .task-meta,
+    .task-item.warning .task-score {
+        color: rgba(255, 255, 0, 0.75) !important;
+    }
+
+    /* 期限が過ぎたタスク（赤色系） */
+    .task-item.danger .task-title {
+        color: red !important;
+    }
+    .task-item.danger .task-meta,
+    .task-item.danger .task-score {
+        color: rgba(255, 0, 0, 0.75) !important;
+    }
+}
+
+/* =========================================
+   7. レスポンシブ（スマホ用）
+   ========================================= */
+@media (max-width: 600px) {
+    .app-container {
+        margin: 30px auto;
+        padding: 0 16px;
+    }
+    
+    .input-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #task_importance,
+    #task_duedate,
+    button#save_btn {
+        width: 100% !important;
+        max-width: none !important;
+    }
+
+    .date-input-group {
+        width: 100%;
+    }
+    
+    /* スマホ版ヘルプテキスト（浮かせるのを解除） */
+    .help-text {
+        position: static !important;
+        margin-top: 6px !important;
+        margin-bottom: 12px !important;
+        white-space: normal !important;
+    }
+
+    .task-meta {
+        flex-direction: column;
+        gap: 4px;
+    }
+}

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📋️Taskage</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>タスク管理</h1>
+        </header>
+
+        <div class="input-section">
+        <div class="input-controls">
+            <input type="text" id="task_title" placeholder="タスクを記入..." autocomplete="off">
+            
+            <select id="task_importance">
+                <option value="" disabled selected hidden>重要度</option>
+                <option value="5">最重要（ビジョンの実現、介護の未来をひらくために直結するもの。）</option>
+                <option value="4">重要（大きな成果や利益に直結する。自分がメインの役割のもの。）</option>
+                <option value="3">中（日常的なもの。）</option>
+                <option value="2">低（やった方が良い、あれば便利というレベル。やらなくてもOKなもの。）</option>
+                <option value="1">最小（やらなくても誰も困らない。自己満足に近いレベルのもの。）</option>
+            </select>
+            
+            <div class="date-input-group">
+                <input type="text" id="task_duedate" class="placeholder-color" placeholder="期日" onfocus="this.type='date'; this.classList.remove('placeholder-color')" onblur="if(!this.value) { this.type='text'; this.classList.add('placeholder-color'); }">
+                <div class="help-text">※期日が未定の場合は入力せずに保存</div>
+            </div>
+            <button id="save_btn">保存</button>
+        </div>
+    </div>
+
+        <div class="task-list-header">
+        <span>タスク名<span class="delete-help">※タスクを削除する場合はダブルクリック</span></span>
+        
+        <span class="meta-header" style="margin-left: auto; ">スコア</span>
+    </div>
+        <ul id="task_list">
+            </ul>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
